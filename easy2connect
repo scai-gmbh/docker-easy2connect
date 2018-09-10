@@ -1,0 +1,65 @@
+#!/bin/bash
+
+ALIVE=`/usr/bin/dig +short txt alive.ec.feste-ip.net`
+i=1
+while [ "$ALIVE" != "\"12345678\"" ]
+do
+echo $ALIVE
+ALIVE=`/usr/bin/dig +short txt alive.ec.feste-ip.net`
+sleep 30
+i=`expr $i + 1`
+if [ $i -gt 20 ]
+then
+    if [ -a /etc/fipbox/no_reboot ] 
+    then 
+    i=1
+    else
+    /sbin/reboot
+    fi
+fi
+done
+
+if [ `/bin/date +%s` -le 1445871860 ]
+then
+sudo /bin/date -s @1445871860
+fi
+
+killall openvpn
+echo `ps ax | grep sbin/openvpn | grep -v grep  | wc -l`
+while [ `ps ax | grep sbin/openvpn | grep -v grep  | wc -l` gt 0 ]
+do
+sleep 1
+echo openvpn......
+done
+
+# echo "heartbeat" >/sys/class/leds/led0/trigger
+# echo "heartbeat" >/sys/class/leds/led1/trigger
+
+cp -r /etc/fipbox /tmp
+umount -l /etc/openvpn
+#MYKEY=`gpg --homedir=/tmp/fipbox --list-key | cut -d "/" -f 2 | cut -d " " -f 1 | head -n 3 | tail -n 1 | awk -F "" {'print $1$2"-"$3$4"-"$5$6"-"$7$8'}`
+MYKEY=`gpg --homedir=/tmp/fipbox --list-key --with-colons | grep "pub:u" | awk -F ":" '{print $5}' | cut -c9-16 | awk -F "" {'print $1$2"-"$3$4"-"$5$6"-"$7$8'}`
+MYKEY2=`echo $MYKEY | awk -F "-" '{print $1$2$3$4}'`
+MYKEY2=`echo $((16#$MYKEY2))`
+echo $MYKEY | gpg --homedir=/tmp/fipbox  --yes --output /tmp/send --sign --encrypt -r easy2connect@feste-ip.net
+rm  /tmp/response
+rm -rf /tmp/easy2connect
+rm /tmp/easy2connect.tgz
+curl https://ec.feste-ip.net/ec/ --key /tmp/fipbox/easy2connect.key --cert /tmp/fipbox/easy2connect.crt --cacert /tmp/fipbox/ca.crt --form request=@/tmp/send -o /tmp/response
+gpg --homedir=/tmp/fipbox --output /tmp/easy2connect.tgz --decrypt /tmp/response
+cd /tmp/
+tar xzf easy2connect.tgz
+chmod 777 /tmp/easy2connect/run.sh
+mount -o bind /tmp/easy2connect/openvpn/ /etc/openvpn/
+/tmp/easy2connect/run.sh &
+
+sleep 65
+BASETIME=`/usr/bin/dig +short txt $MYKEY2.ec.feste-ip.net | awk -F "\"" '{print $2}'`
+BASETIMECUR=$BASETIME
+BASETIME=`expr $BASETIMECUR + 1`
+while [ $BASETIME -gt $BASETIMECUR ]
+do
+sleep 605
+BASETIMECUR=`/usr/bin/dig +short txt $MYKEY2.ec.feste-ip.net | awk -F "\"" '{print $2}'`
+done
+/sbin/reboot

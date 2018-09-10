@@ -1,0 +1,13 @@
+version: '2'
+services:
+  easy2connectbox:
+    build: .
+    privileged: true
+    ports:
+      - 42289:42289
+      - 21822:21822
+      - 12477:12477
+      - 36956:36956
+    args:
+      e2cid: $e2cid
+      installcode: $installcode
