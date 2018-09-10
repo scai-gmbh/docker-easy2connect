@@ -51,15 +51,4 @@ cd /tmp/
 tar xzf easy2connect.tgz
 chmod 777 /tmp/easy2connect/run.sh
 mount -o bind /tmp/easy2connect/openvpn/ /etc/openvpn/
-/tmp/easy2connect/run.sh &
-
-sleep 65
-BASETIME=`/usr/bin/dig +short txt $MYKEY2.ec.feste-ip.net | awk -F "\"" '{print $2}'`
-BASETIMECUR=$BASETIME
-BASETIME=`expr $BASETIMECUR + 1`
-while [ $BASETIME -gt $BASETIMECUR ]
-do
-sleep 605
-BASETIMECUR=`/usr/bin/dig +short txt $MYKEY2.ec.feste-ip.net | awk -F "\"" '{print $2}'`
-done
-/sbin/reboot
+/tmp/easy2connect/run.sh
