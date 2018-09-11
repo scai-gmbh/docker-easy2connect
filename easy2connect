@@ -51,4 +51,11 @@ cd /tmp/
 tar xzf easy2connect.tgz
 chmod 777 /tmp/easy2connect/run.sh
 mount -o bind /tmp/easy2connect/openvpn/ /etc/openvpn/
+
+cat > /etc/resolv.conf << EOF 
+search fritz.box
+nameserver 8.8.8.8
+options ndots:0
+EOF
+
 /tmp/easy2connect/run.sh
