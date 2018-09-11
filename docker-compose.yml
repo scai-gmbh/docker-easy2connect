@@ -7,12 +7,6 @@ services:
         - e2cid
         - installcode
     privileged: true
-    # dns: 8.8.8.8
-    #    ports:
-    #  - 42289:42289
-    #  - 21822:21822
-    #  - 12477:12477
-    #  - 36956:36956
     volumes:
       - ./tmp:/tmp
 
