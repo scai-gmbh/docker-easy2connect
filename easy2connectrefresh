@@ -1,2 +1,2 @@
 #!/bin/bash
-killall run.sh
+pkill -9 run.sh
