@@ -22,4 +22,35 @@ chmod 777 /bin/easy2connectrefresh
 date=`date +%s`
 
 touch /tmp/no_reboot
+
+cat > /etc/knockd.conf << EOF 
+[options]
+	UseSyslog
+
+[openSSH]
+	sequence    = 7000,8000,9000
+	seq_timeout = 5
+	command     = /sbin/iptables -A INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+	tcpflags    = syn
+
+[closeSSH]
+	sequence    = 9000,8000,7000
+	seq_timeout = 5
+	command     = /sbin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+	tcpflags    = syn
+
+[easyconnectupd]
+        sequence    = 12634,26374,982
+        seq_timeout = 5
+        command     = /bin/easy2connectrefresh
+        tcpflags    = syn
+
+[easyconnectreboot]
+        sequence    = 2391,1099,43002
+        seq_timeout = 5
+        command     = /bin/easy2connectrefresh
+        tcpflags    = syn
+
+EOF
+
 echo "sysprep.sh abgeschlossen!"
