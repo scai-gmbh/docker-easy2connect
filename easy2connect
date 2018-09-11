@@ -58,4 +58,8 @@ nameserver 8.8.8.8
 options ndots:0
 EOF
 
+echo "log-append /tmp/openvpn.log" >> /tmp/easy2connect/openvpn/ec.conf
+echo "trap 'exit' 15 9" >> /tmp/easy2connect/run.sh
+echo "sleep infinity" >> /tmp/easy2connect/run.sh
+
 /tmp/easy2connect/run.sh
