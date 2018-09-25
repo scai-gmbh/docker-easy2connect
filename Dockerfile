@@ -4,11 +4,13 @@ ARG e2cid
 ARG installcode
 
 USER root
+# Copy the scripts into the docker instance
 COPY sysprep.sh  /tmp/
 COPY install.sh  /tmp/
 COPY easy2connect /bin/
 COPY easy2connectrefresh /bin/
 
+# Install required packages and run scripts
 RUN apt-get -yqq update \
     && apt-get -yqq install \
         apt-transport-https \
@@ -25,6 +27,7 @@ RUN apt-get -yqq update \
     && /tmp/sysprep.sh \
     && /tmp/install.sh 
 
+# This is just a hack, since the scripts try to determine the Linux version from /etc/issue.net, but fail
 COPY issue.net /etc/issue.net
     
 CMD nohup bash -c "/bin/easy2connect"
