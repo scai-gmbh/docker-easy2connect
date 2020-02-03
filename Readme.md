@@ -3,7 +3,7 @@
 * Install docker and docker-compose
 * Generate easyconnnect-Id (e2cid), installcode and VPN-password
 ```
-curl -q https://members.feste-ip.net/e2cbuilder/?TASK=NEW -c /tmp/cookie -o /t
+curl -q https://members.feste-ip.net/e2cbuilder/?TASK=NEW -c /tmp/cookie -o /tmp/e2cbuild.tgz
 curl -q https://members.feste-ip.net/e2cbuilder/?TASK=NEW -b /tmp/cookie
 ```
 This outputs the data on the console.
